@@ -10,10 +10,12 @@ jobs:
     steps:
     - name: Download the latest version of ngrok
       run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-    - name: Extract ngrok using tar
+    - name: Extract ngrok
       run: tar -xf ngrok.zip
+    - name: List contents of ngrok directory (for debugging)
+      run: Get-ChildItem -Recurse
     - name: Authenticate with ngrok
-      run: .\ngrok\ngrok authtoken $Env:NGROK_AUTH_TOKEN
+      run: ./ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
       env:
         NGROK_AUTH_TOKEN: 2kmdpLZ309cYFZjmnO288jfRa5m_69mHcj17uUCSSRCmbJKuf
     - name: Enable Remote Desktop
@@ -23,4 +25,4 @@ jobs:
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
         Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
     - name: Create ngrok tunnel to remote desktop
-      run: .\ngrok\ngrok tcp 3389
+      run: ./ngrok.exe tcp 3389
